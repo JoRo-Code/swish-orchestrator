@@ -1,0 +1,89 @@
+{
+  "name": "swish-orchestrator",
+  "version": "1.0.0",
+  "description": "Modular orchestrator for Swish Play Buddy polyglot microservices",
+  "main": "index.js",
+  "scripts": {
+    "start": "./launch-app.sh",
+    "services:start": "./start-services.sh",
+    "services:stop": "./stop-services.sh",
+    "services:health": "./health-check.sh",
+    "services:logs": "tail -f logs/*.log",
+    "migrate:polytope": "node scripts/migrate-to-polytope.js",
+    "migrate:docker": "node scripts/migrate-to-docker.js",
+    "migrate:k8s": "node scripts/migrate-to-k8s.js",
+    "validate:config": "node scripts/validate-config.js",
+    "test": "npm run services:health",
+    "dev": "npm run start"
+  },
+  "keywords": [
+    "microservices",
+    "orchestrator",
+    "polyglot",
+    "nodejs",
+    "go",
+    "python",
+    "react",
+    "polytope",
+    "docker",
+    "kubernetes"
+  ],
+  "author": "Swish Play Buddy Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/swish-orchestrator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/swish-orchestrator/issues"
+  },
+  "homepage": "https://github.com/your-org/swish-orchestrator#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "js-yaml": "^4.1.0",
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0"
+  },
+  "optionalDependencies": {
+    "docker-compose": "^0.24.2",
+    "kubernetes-client": "^12.0.0"
+  },
+  "config": {
+    "services": {
+      "user-service": {
+        "port": 3001,
+        "path": "../demo-user-service"
+      },
+      "payment-service": {
+        "port": 3002,
+        "path": "../demo-payment-service"
+      },
+      "transaction-service": {
+        "port": 3003,
+        "path": "../demo-transaction-service"
+      },
+      "frontend": {
+        "port": 5173,
+        "path": "../swish-play-buddy"
+      }
+    }
+  },
+  "orchestrator": {
+    "type": "bash-scripts",
+    "version": "1.0.0",
+    "compatible_with": [
+      "polytope",
+      "docker-compose",
+      "kubernetes",
+      "nomad"
+    ],
+    "migration_tools": {
+      "polytope": "scripts/migrate-to-polytope.js",
+      "docker": "scripts/migrate-to-docker.js",
+      "kubernetes": "scripts/migrate-to-k8s.js"
+    }
+  }
+}

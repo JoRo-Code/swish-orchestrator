@@ -1,0 +1,116 @@
+# Swish Play Buddy - Orchestrator Configuration
+# This file defines the microservices architecture and deployment configuration
+
+name: "swish-play-buddy"
+version: "1.0.0"
+description: "Polyglot microservices payment application"
+
+# Service definitions
+services:
+  user-service:
+    name: "User Service"
+    technology: "nodejs"
+    language: "JavaScript"
+    framework: "Express"
+    port: 3001
+    path: "../demo-user-service"
+    main: "index.js"
+    health_endpoint: "/health"
+    dependencies:
+      - "node_modules"
+    install_command: "npm install"
+    start_command: "node index.js"
+    description: "Authentication, user profiles, and contact management"
+    
+  payment-service:
+    name: "Payment Service"
+    technology: "go"
+    language: "Go"
+    framework: "Gin"
+    port: 3002
+    path: "../demo-payment-service"
+    main: "main.go"
+    health_endpoint: "/health"
+    dependencies:
+      - "go.mod"
+      - "go.sum"
+    install_command: "go mod tidy"
+    start_command: "go run main.go"
+    description: "Balance management and payment processing"
+    
+  transaction-service:
+    name: "Transaction Service"
+    technology: "python"
+    language: "Python"
+    framework: "Flask"
+    port: 3003
+    path: "../demo-transaction-service"
+    main: "main.py"
+    health_endpoint: "/health"
+    dependencies:
+      - "requirements.txt"
+      - "venv"
+    install_command: "python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt"
+    start_command: "source venv/bin/activate && python3 main.py"
+    description: "Money transfers and transaction history"
+    
+  frontend:
+    name: "Frontend"
+    technology: "react"
+    language: "TypeScript"
+    framework: "Vite + React"
+    port: 5173
+    fallback_ports: [8080, 8081, 8082, 8083]
+    path: "../swish-play-buddy"
+    main: "src/main.tsx"
+    health_endpoint: null
+    dependencies:
+      - "node_modules"
+    install_command: "npm install"
+    start_command: "npm run dev"
+    description: "React frontend with modern UI components"
+
+# Service startup order (dependencies)
+startup_order:
+  - "user-service"
+  - "payment-service" 
+  - "transaction-service"
+  - "frontend"
+
+# Global configuration
+global:
+  logs_directory: "logs"
+  wait_timeout: 30
+  health_check_interval: 1
+  
+# Test configuration
+test:
+  credentials:
+    phone: "+46701234567"
+    password: "password123"
+  test_users:
+    - id: "usr_123456789"
+      name: "Anna Andersson"
+      phone: "+46701234567"
+    - id: "usr_987654321" 
+      name: "Erik Johansson"
+      phone: "+46709876543"
+    - id: "usr_456789123"
+      name: "Maria Nilsson"
+      phone: "+46731234567"
+
+# Orchestrator metadata
+orchestrator:
+  type: "bash-scripts"
+  version: "1.0.0"
+  compatible_with:
+    - "polytope"
+    - "docker-compose"
+    - "kubernetes"
+    - "nomad"
+  migration_notes: |
+    This configuration can be easily migrated to:
+    - Polytope: Use polytope.yaml format
+    - Docker Compose: Convert to docker-compose.yml
+    - Kubernetes: Generate k8s manifests
+    - Nomad: Convert to nomad job files
